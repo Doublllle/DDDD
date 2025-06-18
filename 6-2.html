@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>辽宁文化搜索</title>
+    <!-- 使用国内可访问的Vue资源 -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/3.2.47/vue.global.min.js"></script>
+    <style>
+        /* 简化版样式保证兼容性 */
+        body { font-family: Microsoft YaHei; padding: 20px; }
+        .header { background: #c62b29; color: white; padding: 15px; }
+        input { padding: 10px; width: 200px; margin-right: 10px; }
+        button { background: #0055a4; color: white; border: none; padding: 10px 20px; }
+        .result { margin-top: 20px; border: 1px solid #ddd; padding: 15px; }
+        img { max-width: 300px; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <!-- 核心交互区 -->
+    <div id="app">
+        <div class="header">
+            <h2>辽宁文化双语搜索系统</h2>
+            <select v-model="language" style="color: black;">
+                <option value="zh">中文模式</option>
+                <option value="ru">Русский режим</option>
+            </select>
+        </div>
+
+        <!-- 搜索框 -->
+        <div style="margin: 20px 0;">
+            <input 
+                v-model="keyword" 
+                :placeholder="language === 'zh' ? '输入沈阳故宫等关键词' : 'Введите ключевые слова'"
+                @keyup.enter="search"
+            >
+            <button @click="search">{{ language === 'zh' ? '立即搜索' : 'Поиск' }}</button>
+        </div>
+
+        <!-- 搜索结果 -->
+        <div v-if="result" class="result">
+            <h3>{{ language === 'zh' ? result.zh_title : result.ru_title }}</h3>
+            <img :src="result.image" alt="景点图片">
+            <p>{{ language === 'zh' ? result.zh_description : result.ru_description }}</p>
+        </div>
+
+        <!-- 预置提示 -->
+        <div v-if="!result" style="color: #666; margin-top: 50px; text-align: center;">
+            {{ language === 'zh' ? '请尝试搜索：沈阳故宫' : 'Попробуйте поиск: Шэньянский Гугун' }}
+        </div>
+    </div>
+
+    <script>
+        // 预置测试数据（已确保可搜索到结果）
+        const testData = [{
+            zh_title: "沈阳故宫",
+            ru_title: "Шэньянский Императорский Дворец",
+            image: "https://img.zcool.cn/community/01f5fc5b881cbba80121ade027f5f4.jpg", // 示例图片链接
+            zh_description: "中国现存两大宫殿建筑群之一，始建于1625年，代表满族建筑特色...",
+            ru_description: "Один из двух сохранившихся императорских дворцовых комплексов Китая..."
+        }];
+
+        // 自动运行程序
+        Vue.createApp({
+            data() {
+                return {
+                    language: 'zh',
+                    keyword: '',
+                    result: null
+                }
+            },
+            methods: {
+                search() {
+                    if (this.keyword.includes('沈阳') || this.keyword.toLowerCase().includes('шэньян')) {
+                        this.result = testData[0];
+                    } else {
+                        alert(this.language === 'zh' 
+                            ? '请尝试搜索：沈阳故宫' 
+                            : 'Попробуйте: Шэньянский Гугун');
+                    }
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
